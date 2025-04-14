@@ -1,0 +1,12 @@
+.vs/
+.idea/
+
+# Ignore build output and debug files
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.editorconfig
+*.json
