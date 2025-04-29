@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using FitnessCenterApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FitnessCenterApi.Models;
+namespace FitnessCenterApi.Data;
 
-public partial class FitnessCenterDbContext : DbContext
+public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
-    public FitnessCenterDbContext()
-    {
-    }
+    
 
-    public FitnessCenterDbContext(DbContextOptions<FitnessCenterDbContext> options)
-        : base(options)
+    public FitnessCenterDbContext(DbContextOptions<FitnessCenterDbContext> options) : base(options)
     {
+        
     }
 
     public virtual DbSet<FitnessCentar> FitnessCentars { get; set; }
@@ -27,6 +28,9 @@ public partial class FitnessCenterDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
+
         modelBuilder.Entity<FitnessCentar>(entity =>
         {
             entity.HasKey(e => e.IdFitnessCentar);
@@ -43,13 +47,13 @@ public partial class FitnessCenterDbContext : DbContext
 
         modelBuilder.Entity<Membership>(entity =>
         {
+            
             entity.HasKey(e => e.IdMembership);
 
             entity.ToTable("Membership");
 
             entity.Property(e => e.IdMembership).HasColumnName("id_membership");
             entity.Property(e => e.IdFitnessCentar).HasColumnName("id_fitness_centar");
-            entity.Property(e => e.IdUser).HasColumnName("id_user");
             entity.Property(e => e.LoyaltyPoints)
                 .HasDefaultValue(0)
                 .HasColumnName("loyalty_points");
@@ -71,7 +75,7 @@ public partial class FitnessCenterDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.IdUser);
+            entity.HasKey(e => e.Id);
 
             entity.ToTable("User");
 
@@ -81,9 +85,9 @@ public partial class FitnessCenterDbContext : DbContext
 
             entity.HasIndex(e => e.SecretKey, "IX_User_secret_key").IsUnique();
 
-            entity.HasIndex(e => e.Username, "IX_User_username").IsUnique();
+            entity.HasIndex(e => e.UserName, "IX_User_username").IsUnique();
 
-            entity.Property(e => e.IdUser).HasColumnName("id_user");
+            entity.Property(e => e.Id).HasColumnName("id_user");
             entity.Property(e => e.Birthday)
                 .HasColumnType("DATE")
                 .HasColumnName("birthday");
@@ -110,7 +114,7 @@ public partial class FitnessCenterDbContext : DbContext
                 .HasColumnType("VARCHAR(255)")
                 .HasColumnName("secret_key");
             entity.Property(e => e.Status).HasColumnName("status");
-            entity.Property(e => e.Username)
+            entity.Property(e => e.UserName)
                 .HasColumnType("VARCHAR(255)")
                 .HasColumnName("username");
         });

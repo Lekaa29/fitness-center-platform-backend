@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace FitnessCenterApi.Models;
 
-public partial class User
+public partial class User : IdentityUser<int>
 {
-    public int IdUser { get; set; }
+    [Key]
+    [Column("id_user")]
+    public override  int Id { get; set; }
 
     public string FirstName { get; set; } = null!;
 
@@ -16,13 +21,9 @@ public partial class User
     public DateTime CreationDate { get; set; }
 
     public DateTime Birthday { get; set; }
-
-    public string Email { get; set; } = null!;
-
+    
     public string? Phone { get; set; }
-
-    public string Username { get; set; } = null!;
-
+    
     public int Status { get; set; }
 
     public string? PictureLink { get; set; }
