@@ -57,7 +57,7 @@ public class UserService
             PhoneNumber = user.PhoneNumber,
             Email = user.Email,
             PictureLink = imageUrl,
-            Status = 0
+            Status = 1
         };
 
         var createdUser = await _userManager.CreateAsync(newUser, user.Password);
@@ -91,5 +91,6 @@ public class UserService
         return true;
 
     }
+ 
 }
 

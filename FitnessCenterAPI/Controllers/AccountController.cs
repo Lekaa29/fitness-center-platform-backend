@@ -12,11 +12,16 @@ namespace FitnessCenterApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserService _userService;
+    private readonly TokenService _tokenService;
+    private readonly AccountService _accountService;
 
 
-    public AccountController(UserService userService)
+
+    public AccountController(UserService userService, TokenService tokenService, AccountService accountService)
     {
         this._userService = userService;
+        this._tokenService = tokenService;
+        this._accountService = accountService;
     }
 
 
@@ -34,5 +39,19 @@ public class AccountController : ControllerBase
             return Ok("User added successfully");
         }
         return BadRequest("Failed to add user");
+    }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginUser)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _accountService.LoginUser(loginUser);
+
+        if (result.Token != null)
+            return Ok(result);
+
+        return Unauthorized("Invalid credentials.");
     }
 }
