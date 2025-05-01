@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FitnessCenterApi.Dtos;
 using FitnessCenterApi.Models;
+using FitnessCenterApi.Repositories;
 using FitnessCenterApi.Repositories.UserRepositories;
 
 namespace FitnessCenterApi.Services;
@@ -63,6 +64,6 @@ public class AttendanceService
         attendance.FitnessCentar = await _fitnessCenterRepository.GetFitnessCenterAsync(attendanceDto.FitnessCentarId);
         attendance.User = user;
 
-        return await _attendanceRepository.AddClientAsync(attendance);
+        return await _attendanceRepository.AddAttendanceAsync(attendance);
     }
 }

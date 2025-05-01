@@ -1,6 +1,8 @@
 using FitnessCenterApi.Data;
 using FitnessCenterApi.Models;
+using FitnessCenterApi.Repositories;
 using FitnessCenterApi.Repositories.UserRepositories;
+using FitnessCenterApi.Services;
 using FitnessCenterApi.Services.UserServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +17,9 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AttendanceService>();
+builder.Services.AddScoped<AttendanceRepository>();
+builder.Services.AddScoped<FitnessCenterRepository>();
  
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
