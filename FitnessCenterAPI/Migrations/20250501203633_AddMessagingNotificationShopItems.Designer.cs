@@ -3,6 +3,7 @@ using System;
 using FitnessCenterApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,143 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessCenterApi.Migrations
 {
     [DbContext(typeof(FitnessCenterDbContext))]
-    partial class FitnessCenterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250501203633_AddMessagingNotificationShopItems")]
+    partial class AddMessagingNotificationShopItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
-
-            modelBuilder.Entity("FitnessCenterApi.Models.Article", b =>
-                {
-                    b.Property<int>("IdArticle")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IdFitnessCentar")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PictureLink")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdArticle");
-
-                    b.HasIndex("IdFitnessCentar");
-
-                    b.ToTable("Articles");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.Coach", b =>
-                {
-                    b.Property<int>("IdCoach")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Experience")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IdUser")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PictureLink")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("VideoLink")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdCoach");
-
-                    b.HasIndex("IdUser");
-
-                    b.ToTable("Coaches");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.CoachProgram", b =>
-                {
-                    b.Property<int>("IdCoachProgram")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IdCoach")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdFitnessCentar")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdCoachProgram");
-
-                    b.HasIndex("IdCoach");
-
-                    b.HasIndex("IdFitnessCentar");
-
-                    b.ToTable("CoachPrograms");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.Event", b =>
-                {
-                    b.Property<int>("IdEvent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IdFitnessCentar")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MaxParticipants")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PictureUrl")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdEvent");
-
-                    b.HasIndex("IdFitnessCentar");
-
-                    b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.EventParticipant", b =>
-                {
-                    b.Property<int>("IdEvent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdUser")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("IdEvent", "IdUser");
-
-                    b.HasIndex("IdUser");
-
-                    b.ToTable("EventParticipants");
-                });
 
             modelBuilder.Entity("FitnessCenterApi.Models.FitnessCentar", b =>
                 {
@@ -166,21 +38,6 @@ namespace FitnessCenterApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Fitness_Centar", (string)null);
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.FitnessCenterUser", b =>
-                {
-                    b.Property<int>("IdUser")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdFitnessCentar")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("IdUser", "IdFitnessCentar");
-
-                    b.HasIndex("IdFitnessCentar");
-
-                    b.ToTable("FitnessCenterUsers");
                 });
 
             modelBuilder.Entity("FitnessCenterApi.Models.Membership", b =>
@@ -571,96 +428,6 @@ namespace FitnessCenterApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FitnessCenterApi.Models.Article", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.FitnessCentar", "FitnessCentar")
-                        .WithMany()
-                        .HasForeignKey("IdFitnessCentar")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FitnessCentar");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.Coach", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("IdUser")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.CoachProgram", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.Coach", "Coach")
-                        .WithMany()
-                        .HasForeignKey("IdCoach")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessCenterApi.Models.FitnessCentar", "FitnessCentar")
-                        .WithMany()
-                        .HasForeignKey("IdFitnessCentar")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coach");
-
-                    b.Navigation("FitnessCentar");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.Event", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.FitnessCentar", "FitnessCentar")
-                        .WithMany()
-                        .HasForeignKey("IdFitnessCentar")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FitnessCentar");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.EventParticipant", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.Event", "Event")
-                        .WithMany("Participants")
-                        .HasForeignKey("IdEvent")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessCenterApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("IdUser")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.FitnessCenterUser", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.FitnessCentar", "FitnessCentar")
-                        .WithMany()
-                        .HasForeignKey("IdFitnessCentar")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessCenterApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("IdUser")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FitnessCentar");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FitnessCenterApi.Models.Membership", b =>
                 {
                     b.HasOne("FitnessCenterApi.Models.FitnessCentar", "IdFitnessCentarNavigation")
@@ -787,11 +554,6 @@ namespace FitnessCenterApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.Event", b =>
-                {
-                    b.Navigation("Participants");
                 });
 
             modelBuilder.Entity("FitnessCenterApi.Models.FitnessCentar", b =>
