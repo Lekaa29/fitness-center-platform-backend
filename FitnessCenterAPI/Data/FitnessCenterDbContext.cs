@@ -24,6 +24,8 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
     public DbSet<ShopItem> ShopItems { get; set; }
     public DbSet<UserItems> UserItems { get; set; }
     public virtual DbSet<User> Users { get; set; }
+    public DbSet<Attendance> Attendances { get; set; }
+
     
     public DbSet<Article> Articles { get; set; }
     public DbSet<Event> Events { get; set; }
@@ -123,6 +125,22 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
             .WithMany()
             .HasForeignKey(si => si.IdFitnessCentar)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        //attendance
+        modelBuilder.Entity<Attendance>(entity =>
+        {
+            entity.HasKey(e => e.IdAttendance);
+
+            entity.HasOne(a => a.User)
+                .WithMany() // or .WithMany(u => u.Attendances) if you add a collection in `User`
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(a => a.FitnessCentar)
+                .WithMany() // or .WithMany(f => f.Attendances) if you add a collection in `FitnessCentar`
+                .HasForeignKey(a => a.FitnessCentarId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
 // UserItem (many-to-many)
         modelBuilder.Entity<UserItems>()

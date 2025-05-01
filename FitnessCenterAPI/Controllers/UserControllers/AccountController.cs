@@ -5,7 +5,7 @@ using FitnessCenterApi.Services.UserServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FitnessCenterApi.Controllers;
+namespace FitnessCenterApi.Controllers.UserControllers;
 
 [Route("Api/Account/")]
 [ApiController]
