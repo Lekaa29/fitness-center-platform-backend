@@ -20,6 +20,7 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AttendanceService>();
 builder.Services.AddScoped<AttendanceRepository>();
 builder.Services.AddScoped<FitnessCenterRepository>();
+builder.Services.AddScoped<FitnessCenterService>();
  
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -40,7 +41,7 @@ builder.Services.AddSwaggerGen(c =>
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Scheme = "bearer"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
@@ -52,10 +53,7 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",  // Swagger UI requires this even if you use ApiKey
-                Name = "Bearer",
-                In = ParameterLocation.Header,
+                }
             },
             new List<string>()
         }
@@ -88,12 +86,12 @@ builder.Services.AddAuthentication(options =>
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SigningKey"])
+                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
             )
         };
     }
@@ -124,7 +122,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
  
-app.UseAuthorization();
  
 app.MapControllers();
  

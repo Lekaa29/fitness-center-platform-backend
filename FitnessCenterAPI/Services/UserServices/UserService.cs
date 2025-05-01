@@ -57,7 +57,8 @@ public class UserService
             PhoneNumber = user.PhoneNumber,
             Email = user.Email,
             PictureLink = imageUrl,
-            Status = 1
+            Status = 1,
+            EmailConfirmed = true
         };
 
         var createdUser = await _userManager.CreateAsync(newUser, user.Password);
@@ -70,13 +71,7 @@ public class UserService
             return false;
         }
 
-        /*
-        var roleResult = await _userManager.AddToRoleAsync(newUser, "Agent");
-        if (!roleResult.Succeeded)
-        {
-            return false;
-        }
-        */
+      
         var roleResult = await _userManager.AddToRoleAsync(newUser, "Client"); 
         if (!roleResult.Succeeded)
         {
