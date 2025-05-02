@@ -21,49 +21,49 @@ public class MembershipService
         _fitnessCenterRepository = fitnessCenterRepository;
     }
 
-    public async Task<ICollection<MembershipDto>?> GetUserMemberships(string email)
+    public async Task<ICollection<MembershipDto>?> GetUserMembershipsAsync(string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
         {
             return null;
         }
-        var memberships = await _memberShipRepository.GetUserMemberships(user.Id);
+        var memberships = await _memberShipRepository.GetUserMembershipsAsync(user.Id);
 
         var membershipsDtos = _mapper.Map<ICollection<MembershipDto>>(memberships);
         
         return membershipsDtos;
     }
     
-    public async Task<MembershipDto?> GetUserMembershipByFitnessCenter(int fitnessCenterId, string email)
+    public async Task<MembershipDto?> GetUserMembershipByFitnessCenterAsync(int fitnessCenterId, string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
         {
             return null;
         }
-        var membership = await _memberShipRepository.GetUserMembershipByFitnessCenter(user.Id, fitnessCenterId);
+        var membership = await _memberShipRepository.GetUserMembershipByFitnessCenterAsync(user.Id, fitnessCenterId);
 
         var membershipDtos = _mapper.Map<MembershipDto>(membership);
         
         return membershipDtos;
     }
     
-    public async Task<ICollection<MembershipDto>?> GetFitnessCenterMemberships(int fitnessCenterId, string email)
+    public async Task<ICollection<MembershipDto>?> GetFitnessCenterMembershipsAsync(int fitnessCenterId, string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
         {
             return null;
         }
-        var memberships = await _memberShipRepository.GetFitnessCenterMemberships(fitnessCenterId);
+        var memberships = await _memberShipRepository.GetFitnessCenterMembershipsAsync(fitnessCenterId);
 
         var membershipsDtos = _mapper.Map<ICollection<MembershipDto>>(memberships);
         
         return membershipsDtos;
     }
     
-    public async Task<bool> AddMembership(MembershipDto membershipDto, string email)
+    public async Task<bool> AddMembershipAsync(MembershipDto membershipDto, string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
@@ -75,7 +75,7 @@ public class MembershipService
         membership.IdFitnessCentarNavigation = await _fitnessCenterRepository.GetFitnessCenterAsync(membershipDto.IdFitnessCentar);
         membership.IdUserNavigation = user;
 
-        return await _memberShipRepository.AddMembership(membership);
+        return await _memberShipRepository.AddMembershipAsync(membership);
     }
     
     

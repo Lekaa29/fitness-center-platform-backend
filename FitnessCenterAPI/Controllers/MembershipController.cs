@@ -32,9 +32,10 @@ public class MembershipController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var memberships = await _membershipService.GetUserMemberships(email);
+        var memberships = await _membershipService.GetUserMembershipsAsync(email);
         return Ok(memberships);
     }
+    
     [HttpGet("/user/{fitnessCenterId}")]
     [ProducesResponseType(200, Type = typeof(MembershipDto))]
     public async Task<IActionResult> GetUserMembershipByFitnessCenter(int fitnessCenterId)
@@ -50,7 +51,7 @@ public class MembershipController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var membership = await _membershipService.GetUserMembershipByFitnessCenter(fitnessCenterId, email);
+        var membership = await _membershipService.GetUserMembershipByFitnessCenterAsync(fitnessCenterId, email);
         return Ok(membership);
     }
     [HttpGet("/FitnessCenter/")]
@@ -68,7 +69,7 @@ public class MembershipController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var memberships = await _membershipService.GetFitnessCenterMemberships(fitnessCenterId, email);
+        var memberships = await _membershipService.GetFitnessCenterMembershipsAsync(fitnessCenterId, email);
         return Ok(memberships);
     }
     
@@ -83,14 +84,14 @@ public class MembershipController : ControllerBase
         }
         if (membershipDto == null)
         {
-            return BadRequest("FitnessCenter object is null");
+            return BadRequest("Membership object is null");
         }
-        var result = await _membershipService.AddMembership(membershipDto, email);
+        var result = await _membershipService.AddMembershipAsync(membershipDto, email);
         if (result)
         {
-            return Ok("FitnessCenter added successfully");
+            return Ok("Membership added successfully");
         }
-        return BadRequest("FitnessCenter not added");
+        return BadRequest("Membership not added");
     }   
     
 }

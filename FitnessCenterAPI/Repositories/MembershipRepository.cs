@@ -13,7 +13,7 @@ public class MembershipRepository
         _context = context;
     }
     
-    public async  Task<ICollection<Membership>> GetUserMemberships(int userId)
+    public async  Task<ICollection<Membership>> GetUserMembershipsAsync(int userId)
     {
 
         var membership = await _context.Memberships.Where(
@@ -22,7 +22,7 @@ public class MembershipRepository
         return membership;
     }
     
-    public async  Task<Membership?> GetUserMembershipByFitnessCenter(int userId, int fitnessCenterId)
+    public async  Task<Membership?> GetUserMembershipByFitnessCenterAsync(int userId, int fitnessCenterId)
     {
 
         var membership = await _context.Memberships.Where(
@@ -30,7 +30,7 @@ public class MembershipRepository
         return membership;
     }
     
-    public async  Task<ICollection<Membership>> GetFitnessCenterMemberships(int fitnessCenterId)
+    public async  Task<ICollection<Membership>> GetFitnessCenterMembershipsAsync(int fitnessCenterId)
     {
 
         var membership = await _context.Memberships.Where(
@@ -39,7 +39,7 @@ public class MembershipRepository
         return membership;
     }
     
-    public async Task<bool> AddMembership(Membership membership) 
+    public async Task<bool> AddMembershipAsync(Membership membership) 
     {
         await _context.Memberships.AddAsync(membership);
         return await SaveAsync();

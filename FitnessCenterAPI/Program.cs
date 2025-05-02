@@ -21,6 +21,10 @@ builder.Services.AddScoped<AttendanceService>();
 builder.Services.AddScoped<AttendanceRepository>();
 builder.Services.AddScoped<FitnessCenterRepository>();
 builder.Services.AddScoped<FitnessCenterService>();
+builder.Services.AddScoped<CoachService>();
+builder.Services.AddScoped<CoachRepository>();
+builder.Services.AddScoped<MembershipService>();
+builder.Services.AddScoped<MembershipRepository>();
  
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
