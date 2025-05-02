@@ -61,6 +61,8 @@ public class AttendanceService
         }
         var attendance = _mapper.Map<Attendance>(attendanceDto);
         
+        attendance.Timestamp = DateTime.Now;
+        
         attendance.FitnessCentar = await _fitnessCenterRepository.GetFitnessCenterAsync(attendanceDto.FitnessCentarId);
         attendance.User = user;
 

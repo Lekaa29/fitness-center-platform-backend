@@ -61,10 +61,7 @@ public class FitnessCenterController : ControllerBase
     public async Task<IActionResult> AddFitnessCenter([FromBody] FitnessCenterDto fitnessCenterDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine("USER:");
-        Console.WriteLine(User.FindFirst(ClaimTypes.Email));
-        Console.WriteLine("EMAIL:");
-        Console.WriteLine(email);
+  
         if (email == null)
         {
             return Unauthorized("Invalid attempt");

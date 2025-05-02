@@ -8,5 +8,5 @@ public class AttendanceDto
 
     public int FitnessCentarId { get; set; }
 
-    public DateTime Timestamp { get; set; }
+    public DateTime? Timestamp { get; set; }
 }

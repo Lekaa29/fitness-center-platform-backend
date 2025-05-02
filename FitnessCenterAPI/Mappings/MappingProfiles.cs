@@ -10,5 +10,6 @@ public class MappingProfiles : Profile
     {
         CreateMap<Attendance, AttendanceDto>().ReverseMap();
         CreateMap<FitnessCentar, FitnessCenterDto>().ReverseMap();
+        CreateMap<Membership, MembershipDto>().ReverseMap();
     }
 }
