@@ -31,4 +31,6 @@ public partial class User : IdentityUser<int>
     public string? SecretKey { get; set; }
 
     public virtual ICollection<Membership> Memberships { get; set; } = new List<Membership>();
+    public ICollection<UserConversation> UserConversations { get; set; } = new List<UserConversation>();
+
 }

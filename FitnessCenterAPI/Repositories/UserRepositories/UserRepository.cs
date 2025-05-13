@@ -28,4 +28,9 @@ public class UserRepository
         return await _context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
     }
     
+    public async Task<User?> GetUserAsync(int userId)
+    {
+        return await _context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+    }
+    
 }

@@ -3,6 +3,7 @@ using System;
 using FitnessCenterApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessCenterApi.Migrations
 {
     [DbContext(typeof(FitnessCenterDbContext))]
-    partial class FitnessCenterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250512161917_AddMessageBooleanTypes")]
+    partial class AddMessageBooleanTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
@@ -139,9 +142,6 @@ namespace FitnessCenterApi.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("groupOwnerId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("INTEGER");
@@ -287,6 +287,9 @@ namespace FitnessCenterApi.Migrations
                     b.Property<int>("IdConversation")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("IdRecipient")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("IdSender")
                         .HasColumnType("INTEGER");
 
@@ -306,6 +309,8 @@ namespace FitnessCenterApi.Migrations
                     b.HasKey("IdMessage");
 
                     b.HasIndex("ConversationIdConversation");
+
+                    b.HasIndex("IdRecipient");
 
                     b.HasIndex("IdSender");
 
@@ -501,9 +506,6 @@ namespace FitnessCenterApi.Migrations
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("UserId", "ConversationId");
 
                     b.HasIndex("ConversationId");
@@ -524,24 +526,6 @@ namespace FitnessCenterApi.Migrations
                     b.HasIndex("IdShopItem");
 
                     b.ToTable("UserItems");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.UserMessage", b =>
-                {
-                    b.Property<int>("MessageId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("isRead")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("MessageId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserMessages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -804,6 +788,12 @@ namespace FitnessCenterApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FitnessCenterApi.Models.User", "Recipient")
+                        .WithMany()
+                        .HasForeignKey("IdRecipient")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FitnessCenterApi.Models.User", "Sender")
                         .WithMany()
                         .HasForeignKey("IdSender")
@@ -811,6 +801,8 @@ namespace FitnessCenterApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Conversation");
+
+                    b.Navigation("Recipient");
 
                     b.Navigation("Sender");
                 });
@@ -871,25 +863,6 @@ namespace FitnessCenterApi.Migrations
                         .IsRequired();
 
                     b.Navigation("ShopItem");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FitnessCenterApi.Models.UserMessage", b =>
-                {
-                    b.HasOne("FitnessCenterApi.Models.Message", "Message")
-                        .WithMany()
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitnessCenterApi.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Message");
 
                     b.Navigation("User");
                 });

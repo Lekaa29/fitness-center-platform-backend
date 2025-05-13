@@ -23,6 +23,8 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<ShopItem> ShopItems { get; set; }
     public DbSet<UserItems> UserItems { get; set; }
+    public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<UserConversation> UserConversations { get; set; }
     public virtual DbSet<User> Users { get; set; }
     public DbSet<Attendance> Attendances { get; set; }
 
@@ -34,6 +36,7 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
     public DbSet<CoachProgram> CoachPrograms { get; set; }
     public DbSet<FitnessCenterUser> FitnessCenterUsers { get; set; }
 
+    public DbSet<UserMessage> UserMessages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -42,6 +45,34 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<UserMessage>()
+            .HasKey(um => new { um.MessageId, um.UserId }); // Composite key
+
+        modelBuilder.Entity<UserMessage>()
+            .HasOne(um => um.User)
+            .WithMany() // Or .WithMany(u => u.UserMessages) if User has a collection
+            .HasForeignKey(um => um.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserMessage>()
+            .HasOne(um => um.Message)
+            .WithMany() // Or .WithMany(m => m.UserMessages) if Message has a collection
+            .HasForeignKey(um => um.MessageId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<UserConversation>()
+            .HasKey(uc => new { uc.UserId, uc.ConversationId });
+
+        modelBuilder.Entity<UserConversation>()
+            .HasOne(uc => uc.User)
+            .WithMany(u => u.UserConversations)
+            .HasForeignKey(uc => uc.UserId);
+
+        modelBuilder.Entity<UserConversation>()
+            .HasOne(uc => uc.Conversation)
+            .WithMany(c => c.Participants)
+            .HasForeignKey(uc => uc.ConversationId);
         
         // Article
         modelBuilder.Entity<Article>()
@@ -106,11 +137,7 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
             .HasForeignKey(m => m.IdSender)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Message>()
-            .HasOne(m => m.Recipient)
-            .WithMany()
-            .HasForeignKey(m => m.IdRecipient)
-            .OnDelete(DeleteBehavior.Restrict);
+        
 
 // Notification
         modelBuilder.Entity<Notification>()

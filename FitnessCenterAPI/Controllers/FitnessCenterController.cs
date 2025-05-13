@@ -57,7 +57,7 @@ public class FitnessCenterController : ControllerBase
         return Ok(fitnessCenter);
     }
     
-    [HttpPost("")]
+    [HttpPost("AddFitnessCenter")]
     public async Task<IActionResult> AddFitnessCenter([FromBody] FitnessCenterDto fitnessCenterDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
