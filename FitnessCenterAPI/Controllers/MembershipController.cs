@@ -73,7 +73,7 @@ public class MembershipController : ControllerBase
         return Ok(memberships);
     }
     
-    [HttpPost("")]
+    [HttpPost("AddMembership")]
     public async Task<IActionResult> AddMembership([FromBody] MembershipDto membershipDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;

@@ -14,7 +14,7 @@ public class MembershipRepository
     }
     
     public async  Task<ICollection<Membership>> GetUserMembershipsAsync(int userId)
-    {
+    {   
 
         var membership = await _context.Memberships.Where(
             m => m.IdUser == userId).ToListAsync();

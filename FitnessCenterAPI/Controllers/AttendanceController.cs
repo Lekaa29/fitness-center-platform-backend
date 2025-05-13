@@ -75,7 +75,7 @@ public class AttendanceController : ControllerBase
     }
 
 
-    [HttpPost()]
+    [HttpPost("AddAttendance")]
     public async Task<IActionResult> AddAttendance([FromBody] AttendanceDto attendanceDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;

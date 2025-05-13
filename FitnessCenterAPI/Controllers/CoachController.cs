@@ -53,7 +53,7 @@ public class CoachController : ControllerBase
         var coach = await _coachService.GetCoachProgramAsync(coachProgramId, email);
         return Ok(coach);
     }
-    [HttpPost("")]
+    [HttpPost("AddCoach")]
     public async Task<IActionResult> AddCoach([FromBody] CoachDto coachDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
@@ -74,7 +74,7 @@ public class CoachController : ControllerBase
         return BadRequest("Coach not added");
     }   
     
-    [HttpPost("/coachProgram/")]
+    [HttpPost("AddCoachProgram")]
     public async Task<IActionResult> AddCoachProgram([FromBody] CoachProgramDto coachProgramDto)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
