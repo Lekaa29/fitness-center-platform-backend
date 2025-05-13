@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using FitnessCenterApi.Dtos;
+using FitnessCenterApi.Dtos.Chat;
 using FitnessCenterApi.Dtos.Coach;
 using FitnessCenterApi.Models;
 
@@ -14,6 +16,11 @@ public class MappingProfiles : Profile
         CreateMap<Membership, MembershipDto>().ReverseMap();
         CreateMap<Coach, CoachDto>().ReverseMap();
         CreateMap<CoachProgram, CoachProgramDto>().ReverseMap();
-
+        CreateMap<UserConversation, UserConversationDto>().ReverseMap();
+        CreateMap<Conversation, ConversationDto>().ReverseMap();
+        CreateMap<Message, MessageDto>().ReverseMap();
+        CreateMap<User, UserDto>().ReverseMap();
+        CreateMap<Group, GroupDto>().ReverseMap();
+        
     }
 }
