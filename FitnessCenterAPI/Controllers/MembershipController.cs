@@ -17,7 +17,7 @@ public class MembershipController : ControllerBase
         _membershipService = membershipService;
     }
     
-    [HttpGet("/user/")]
+    [HttpGet("user")]
     [ProducesResponseType(200, Type = typeof(List<MembershipDto>))]
     public async Task<IActionResult> GetUserMemberships()
     {
@@ -36,7 +36,7 @@ public class MembershipController : ControllerBase
         return Ok(memberships);
     }
     
-    [HttpGet("/user/{fitnessCenterId}")]
+    [HttpGet("user/{fitnessCenterId}")]
     [ProducesResponseType(200, Type = typeof(MembershipDto))]
     public async Task<IActionResult> GetUserMembershipByFitnessCenter(int fitnessCenterId)
     {
@@ -54,7 +54,7 @@ public class MembershipController : ControllerBase
         var membership = await _membershipService.GetUserMembershipByFitnessCenterAsync(fitnessCenterId, email);
         return Ok(membership);
     }
-    [HttpGet("/FitnessCenter/")]
+    [HttpGet("FitnessCenter/")]
     [ProducesResponseType(200, Type = typeof(List<MembershipDto>))]
     public async Task<IActionResult> GetFitnessCenterMemberships(int fitnessCenterId)
     {
@@ -92,6 +92,27 @@ public class MembershipController : ControllerBase
             return Ok("Membership added successfully");
         }
         return BadRequest("Membership not added");
+    }   
+    
+    [HttpPost("UpdateMembership")]
+    public async Task<IActionResult> UpdateMembership([FromBody] MembershipDto membershipDto)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+     
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+        if (membershipDto == null)
+        {
+            return BadRequest("Membership object is null");
+        }
+        var result = await _membershipService.UpdateMembershipAsync(membershipDto, email);
+        if (result)
+        {
+            return Ok("Membership updated successfully");
+        }
+        return BadRequest("Membership not updated");
     }   
     
 }

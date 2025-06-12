@@ -74,8 +74,38 @@ public class MembershipService
 
         membership.IdFitnessCentarNavigation = await _fitnessCenterRepository.GetFitnessCenterAsync(membershipDto.IdFitnessCentar);
         membership.IdUserNavigation = user;
+        
+        membership.MembershipDeadline = DateTime.Now.AddDays(31);
 
         return await _memberShipRepository.AddMembershipAsync(membership);
+    }
+    
+    public async Task<bool> UpdateMembershipAsync(MembershipDto membershipDto, string email)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+        if (user == null)
+        {
+            return false;
+        }
+
+        var existingMembership =
+           await _memberShipRepository.GetUserMembershipByFitnessCenterAsync(user.Id, membershipDto.IdFitnessCentar);
+        if (existingMembership == null)
+        {
+            var membership = _mapper.Map<Membership>(membershipDto);
+
+            membership.IdFitnessCentarNavigation = await _fitnessCenterRepository.GetFitnessCenterAsync(membershipDto.IdFitnessCentar);
+            membership.IdUserNavigation = user;
+        
+            membership.MembershipDeadline = DateTime.Now.AddDays(31);
+
+            return await _memberShipRepository.AddMembershipAsync(membership);
+        }
+        existingMembership.MembershipDeadline = DateTime.Now.AddDays(31);
+        existingMembership.LoyaltyPoints += 250;
+        
+
+        return await _memberShipRepository.UpdateMembershipAsync(existingMembership);
     }
     
     

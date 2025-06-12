@@ -44,7 +44,13 @@ public class MembershipRepository
         await _context.Memberships.AddAsync(membership);
         return await SaveAsync();
     }
-    
+    public async Task<bool> UpdateMembershipAsync(Membership membership) 
+    {
+        _context.Memberships.Update(membership);
+        return await SaveAsync();
+    }
+        
+        
     private async Task<bool> SaveAsync()
     {
         return await _context.SaveChangesAsync() > 0;

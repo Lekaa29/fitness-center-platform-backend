@@ -12,5 +12,5 @@ public class MembershipDto
 
     public int? StreakRunCount { get; set; }
 
-    public int? MembershipCountdown { get; set; }
+    public  DateTime? MembershipDeadline { get; set; }
 }

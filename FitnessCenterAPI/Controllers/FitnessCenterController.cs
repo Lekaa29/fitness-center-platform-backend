@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessCenterApi.Controllers;
 
 
-[Route("Api/FitnessCenter/")]
+[Route("api/FitnessCenter/")]
 [ApiController]
 public class FitnessCenterController : ControllerBase
 {

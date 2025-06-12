@@ -15,7 +15,7 @@ public partial class Membership
 
     public int? StreakRunCount { get; set; }
 
-    public int? MembershipCountdown { get; set; }
+    public DateTime? MembershipDeadline { get; set; }
 
     public virtual FitnessCentar IdFitnessCentarNavigation { get; set; } = null!;
 

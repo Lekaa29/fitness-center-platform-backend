@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FitnessCenterApi.Dtos.Account;
+using FitnessCenterApi.Dtos.Chat;
 using FitnessCenterApi.Models;
 using FitnessCenterApi.Repositories.UserRepositories;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,20 @@ public class UserService
         _mapper = mapper;
         _userManager = userManager;
     }
+    
+        
+    public async Task<UserDto?> GetUserAsync(int userId, string email)
+    {
+        var user = await _userRepository.GetUserAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
 
+        var userDto = _mapper.Map<UserDto>(user);
+        
+        return userDto;
+    }
     public async Task<bool> AddUserAsync(RegisterDto user)
     {
         Console.WriteLine("USERNAME:");

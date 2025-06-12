@@ -21,6 +21,7 @@ public class MappingProfiles : Profile
         CreateMap<Message, MessageDto>().ReverseMap();
         CreateMap<User, UserDto>().ReverseMap();
         CreateMap<Group, GroupDto>().ReverseMap();
-        
+        CreateMap<ShopItem, ShopItemDto>().ReverseMap();
+
     }
 }

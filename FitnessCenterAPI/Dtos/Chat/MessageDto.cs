@@ -8,7 +8,7 @@ public class MessageDto
     public int IdSender { get; set; }
     
     public string Text { get; set; } = string.Empty;
-
+    public DateTime Timestamp { get; set; }
     public bool isDeleted { get; set; } = false;
     public bool isPinned { get; set; } = false;
     

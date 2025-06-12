@@ -254,11 +254,9 @@ namespace FitnessCenterApi.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("loyalty_points");
 
-                    b.Property<int?>("MembershipCountdown")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(0)
-                        .HasColumnName("membershipCountdown");
+                    b.Property<DateTime?>("MembershipDeadline")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("membershipDeadline");
 
                     b.Property<int?>("StreakRunCount")
                         .ValueGeneratedOnAdd()

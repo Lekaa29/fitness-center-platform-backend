@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessCenterApi.Controllers;
 
 
-[Route("Api/Attendance/")]
+[Route("api/Attendance/")]
 [ApiController]
 public class AttendanceController : ControllerBase
 {
@@ -18,7 +18,7 @@ public class AttendanceController : ControllerBase
         _attendanceService = attendanceService;
     }
     
-    [HttpGet("/users/")]
+    [HttpGet("users/")]
     [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
     public async Task<IActionResult> GetAttendancesByUser()
     {
@@ -36,7 +36,7 @@ public class AttendanceController : ControllerBase
         var attendances = await _attendanceService.GetAttendancesByUserAsync(email);
         return Ok(attendances);
     }
-    [HttpGet("/users/{fitnessCenterId}")]
+    [HttpGet("users/{fitnessCenterId}")]
     [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
     public async Task<IActionResult> GetAttendancesByUsersAtFitnessCenter(int fitnessCenterId)
     {
@@ -55,7 +55,7 @@ public class AttendanceController : ControllerBase
         return Ok(attendances);
     }
     
-    [HttpGet("/fitnesscenters/{fitnessCenterId}")]
+    [HttpGet("fitnesscenters/{fitnessCenterId}")]
     [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
     public async Task<IActionResult> GetAttendancesByFitnessCenter(int fitnessCenterId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
     {
@@ -71,6 +71,25 @@ public class AttendanceController : ControllerBase
         }
 
         var attendances = await _attendanceService.GetAttendancesByFitnessCenter(email, fitnessCenterId);
+        return Ok(attendances);
+    }
+    
+    [HttpGet("fitnesscenters/recent/{fitnessCenterId}")]
+    [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
+    public async Task<IActionResult> GetRecentFitnessCenterAttendees(int fitnessCenterId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var attendances = await _attendanceService.GetRecentFitnessCenterAttendeesAsync(email, fitnessCenterId);
         return Ok(attendances);
     }
 

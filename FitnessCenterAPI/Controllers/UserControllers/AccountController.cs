@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using FitnessCenterApi.Dtos.Account;
+using FitnessCenterApi.Dtos.Chat;
 using FitnessCenterApi.Models;
 using FitnessCenterApi.Services.UserServices;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessCenterApi.Controllers.UserControllers;
 
-[Route("Api/Account/")]
+[Route("api/Account/")]
 [ApiController]
 public class AccountController : ControllerBase
 {
@@ -23,7 +24,24 @@ public class AccountController : ControllerBase
         this._tokenService = tokenService;
         this._accountService = accountService;
     }
+    [HttpGet("{userId}")]
+    [ProducesResponseType(200, Type = typeof(UserDto))]
+    public async Task<IActionResult> GetUser(int userId)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var user = await _userService.GetUserAsync(userId, email);
+        return Ok(user);
+    }
 
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)

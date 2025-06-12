@@ -209,9 +209,8 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
             entity.Property(e => e.LoyaltyPoints)
                 .HasDefaultValue(0)
                 .HasColumnName("loyalty_points");
-            entity.Property(e => e.MembershipCountdown)
-                .HasDefaultValue(0)
-                .HasColumnName("membershipCountdown");
+            entity.Property(e => e.MembershipDeadline)
+                .HasColumnName("membershipDeadline");
             entity.Property(e => e.StreakRunCount)
                 .HasDefaultValue(0)
                 .HasColumnName("streak_run_count");

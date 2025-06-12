@@ -1,0 +1,27 @@
+﻿{
+  "username": "leka40",
+  "firstName": "Ivan",
+  "lastName": "Horvat",
+  "email": "a@a.com",
+  "password": "Lekaa40.",
+  "phoneNumber": "string",
+  "profilePicture": null
+}
+
+
+{
+  "username": "leka41",
+  "firstName": "Lovro",
+  "lastName": "Lesic",
+  "email": "b@b.com",
+  "password": "Lekaa41.",
+  "phoneNumber": "string",
+  "profilePicture": null
+}
+
+
+{
+  "email": "a@a.com",
+  "userName": "leka40",
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFAYS5jb20iLCJuYW1laWQiOlsibGVrYTQwIiwiNSJdLCJ1bmlxdWVfbmFtZSI6ImFAYS5jb20iLCJuYmYiOjE3NDcxNjg3MzMsImV4cCI6MTc0NzI1NTEzMywiaWF0IjoxNzQ3MTY4NzMzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNjYiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcwNjYifQ.fvaawOVEfESm8dIOB0gguHOWd9LGefC0EUngHJAroPB4ixgNYBuwd5Uxgae3_KdvVWpqBC-sVPkQOx01VcfdHQ"
+}

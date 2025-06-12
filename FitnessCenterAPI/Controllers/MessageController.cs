@@ -17,7 +17,7 @@ public class MessageController : ControllerBase
         _messageService = messageService;
     }
     
-    [HttpGet("/{conversationId}/}")]
+    [HttpGet("{conversationId}/")]
     [ProducesResponseType(200, Type = typeof(List<MessageDto>))]
     public async Task<IActionResult> GetConversationMessages(int conversationId)
     {
@@ -36,7 +36,7 @@ public class MessageController : ControllerBase
         return Ok(messages);
     }
     
-    [HttpGet("/user")]
+    [HttpGet("chats")]
     [ProducesResponseType(200, Type = typeof(List<ConversationDto>))]
     public async Task<IActionResult> GetAllUsersConversations()
     {
@@ -55,7 +55,9 @@ public class MessageController : ControllerBase
         return Ok(conversations);
     }
     
-    [HttpGet("/{conversationId}/participants")]
+    
+    
+    [HttpGet("{conversationId}/participants")]
     [ProducesResponseType(200, Type = typeof(List<UserDto>))]
     public async Task<IActionResult> GetAllConversationParticipants(int conversationId)
     {
@@ -74,7 +76,7 @@ public class MessageController : ControllerBase
         return Ok(users);
     }
     
-    [HttpGet("/{conversationId}/search/")]
+    [HttpGet("{conversationId}/search/")]
     [ProducesResponseType(200, Type = typeof(List<MessageDto>))]
     public async Task<IActionResult> SearchConversationMessages(int conversationId, string searchQuery)
     {
@@ -93,8 +95,8 @@ public class MessageController : ControllerBase
         return Ok(messages);
     }
     
-    [HttpPost("message/send")]
-    public async Task<IActionResult> AddMessage([FromBody] MessageDto messageDto)
+    [HttpPost("message/send/{recipientId}")]
+    public async Task<IActionResult> AddMessage([FromBody] MessageDto messageDto, int recipientId)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
      
@@ -106,7 +108,7 @@ public class MessageController : ControllerBase
         {
             return BadRequest("Message object is null");
         }
-        var result = await _messageService.AddMessageAsync(messageDto, email);
+        var result = await _messageService.AddMessageAsync(messageDto,recipientId, email);
         if (result)
         {
             return Ok("Message added successfully");
@@ -153,7 +155,7 @@ public class MessageController : ControllerBase
         }
         return BadRequest("Messages deleted unsuccessfully");
     } 
-    [HttpDelete("/remove/{conversationId}/")]
+    [HttpDelete("remove/{conversationId}/")]
     public async Task<IActionResult> DeleteConversation(int conversationId)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
@@ -193,7 +195,7 @@ public class MessageController : ControllerBase
         return BadRequest("Message not updated");
     }  
     
-    [HttpGet("/{conversationId}/message/unreadCount")]
+    [HttpGet("{conversationId}/message/unreadCount")]
     [ProducesResponseType(200, Type = typeof(int))]
     public async Task<IActionResult> GetConversationUnreadMessages(int conversationId)
     {
@@ -212,7 +214,7 @@ public class MessageController : ControllerBase
         return Ok(count);
     }
     
-    [HttpGet("/unreadCount")]
+    [HttpGet("unreadCount")]
     [ProducesResponseType(200, Type = typeof(int))]
     public async Task<IActionResult> GetTotalUnreadMessages()
     {

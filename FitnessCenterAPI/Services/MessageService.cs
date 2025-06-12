@@ -35,19 +35,21 @@ public class MessageService
         return messagesDtos;
     }
     
-    public async Task<ICollection<MessageDto>?> GetAllUsersConversationsAsync(string email)
+    public async Task<ICollection<ConversationDto>?> GetAllUsersConversationsAsync(string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
         {
             return null;
         }
-        var messages = await _messageRepository.GetAllUsersConversationsAsync(user.Id);
+        var conversations = await _messageRepository.GetAllUsersConversationsAsync(user.Id);
 
-        var messagesDtos = _mapper.Map<ICollection<MessageDto>>(messages);
+        var conversationsDtos = _mapper.Map<ICollection<ConversationDto>>(conversations);
         
-        return messagesDtos;
+        return conversationsDtos;
     }
+    
+ 
     
     public async Task<ICollection<UserDto>?> GetAllConversationParticipantsAsync(int conversationId, string email)
     {
@@ -84,7 +86,7 @@ public class MessageService
     
     
     
-    public async Task<bool> AddMessageAsync(MessageDto messageDto, string email)
+    public async Task<bool> AddMessageAsync(MessageDto messageDto, int recipientId, string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
@@ -94,35 +96,96 @@ public class MessageService
         var message = _mapper.Map<Message>(messageDto);
         
         
-        
-        
-        
-        
-        
         message.Sender = user;
         message.Timestamp = DateTime.Now;
         
+        User? recipient = null;
         
+        if (recipientId != -1)
+        {
+            //generate new chat for first messages
+            
+            recipient = await _userRepository.GetUserAsync(recipientId);
+            if (recipient == null) return false;
+            Conversation newConversation = new Conversation();
+            int conversationId = await _messageRepository.AddConversationAsync(newConversation);
+            
+            //update message to be connected to the new chat
+            message.Conversation = newConversation;
+            message.IdConversation = conversationId;
+            
+            //generate both connections to the conversation
+            UserConversation userConversation = new UserConversation();
+            userConversation.ConversationId = conversationId;
+            userConversation.UserId = recipient.Id;
+            userConversation.User = recipient;
+            bool status = await _messageRepository.AddUserConversationAsync(userConversation);
+            if (status == false) return false;
+            userConversation = new UserConversation();
+            userConversation.ConversationId = conversationId;
+            userConversation.UserId = user.Id;
+            userConversation.User = user;
+            status = await _messageRepository.AddUserConversationAsync(userConversation);
+            if (status == false) return false;
+            
+        }
+        else
+        {
+            Conversation existingConversation = await _messageRepository.GetConversationAsync(messageDto.IdConversation);
+            if (existingConversation == null) return false;
+            
+            message.Conversation = existingConversation;
+            message.IdConversation = existingConversation.IdConversation;
+        }
         
         int messageId = await _messageRepository.AddMessageAsync(message);
         
         if (messageId < 0) return false;
-        
-        var recepients = await _messageRepository.GetAllConversationParticipantsAsync(messageDto.IdConversation);
-        foreach (var recepient in recepients)
+
+        if (recipientId != -1)
         {
             UserMessage newUserMessage = new UserMessage();
-            newUserMessage.UserId = recepient.Id;
-            newUserMessage.User = recepient;
+            newUserMessage.UserId = recipientId;
+            newUserMessage.User = recipient;
             newUserMessage.Message = message;
             newUserMessage.MessageId = messageId;
-            /*
+            newUserMessage.isRead = false;
+
             bool status = await _messageRepository.AddUserMessageAsync(newUserMessage);
             if (status == false) return false;
-            */
+            
+            newUserMessage = new UserMessage();
+            newUserMessage.UserId = user.Id;
+            newUserMessage.User = user;
+            newUserMessage.Message = message;
+            newUserMessage.MessageId = messageId;
+            newUserMessage.isRead = true;
+            
+            
+            return await _messageRepository.AddUserMessageAsync(newUserMessage);
+
+        }
+        else
+        {
+            
+            var recepients = await _messageRepository.GetAllConversationParticipantsAsync(messageDto.IdConversation);
+            foreach (var recepient in recepients)
+            {
+                UserMessage newUserMessage = new UserMessage();
+                newUserMessage.UserId = recepient.Id;
+                newUserMessage.User = recepient;
+                newUserMessage.Message = message;
+                newUserMessage.MessageId = messageId;
+                
+                bool status = await _messageRepository.AddUserMessageAsync(newUserMessage);
+                if (status == false) return false;
+                
+            }
         }
         return true;
     }
+    
+    
     
     
     

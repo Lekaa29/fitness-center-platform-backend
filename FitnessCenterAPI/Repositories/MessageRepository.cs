@@ -38,6 +38,8 @@ public class MessageRepository
         return conversations;
     }
     
+    
+    
     public async  Task<ICollection<User>> GetAllConversationParticipantsAsync(int conversationId)
     {   
 
@@ -128,6 +130,13 @@ public class MessageRepository
         if (status == false) return -1;
 
         return message.IdMessage;
+
+    }
+    
+    public async Task<bool> AddUserMessageAsync(UserMessage userMessage) 
+    {
+        await _context.UserMessages.AddAsync(userMessage);
+        return await SaveAsync();
 
     }
     
