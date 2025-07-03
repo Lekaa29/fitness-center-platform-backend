@@ -37,40 +37,77 @@ public class AttendanceRepository
         return attendances;
     }
     
-    public async  Task<Attendance> GetLastAttendancesByFitnessCenter(int fitnessCenterId)
+    public async Task<Attendance?> GetLastAttendancesByFitnessCenter(int fitnessCenterId, int userId)
     {
-        var attendances = await _context.Attendances.Where(
-            a => a.FitnessCentarId == fitnessCenterId).ToListAsync();
-        
-        return attendances.Last();
+        var attendances = await _context.Attendances
+            .Where(a => a.FitnessCentarId == fitnessCenterId && a.UserId == userId)
+            .ToListAsync();
+
+        return attendances.LastOrDefault(); // returns null if list is empty
     }
+
     
-    public async  Task<Attendance> ExtendStreakAsync(int userId, int fitnessCenterId)
+    public async  Task<bool> ExtendStreakAsync(int userId, int fitnessCenterId)
     {
+        var membership = await _context.Memberships.Where(
+            m => m.IdFitnessCentar == fitnessCenterId && m.IdUser == userId).FirstOrDefaultAsync();
+        if (membership == null) return false;
         
-        var attendances = await _context.Attendances.Where(
-            a => a.FitnessCentarId == fitnessCenterId).ToListAsync();
+        membership.StreakRunCount += 1;
         
-        return attendances.Last();
+        return await SaveAsync();
     }
     
     
     
     public async Task<ICollection<Attendance>> GetRecentFitnessCenterAttendeesAsync(int fitnessCenterId)
     {
-        var oneHourAgo = DateTime.UtcNow.AddHours(-1);
+        var oneAndHalfHoursAgo = DateTime.UtcNow.AddHours(-1.5);
 
         var attendances = await _context.Attendances
-            .Where(a => a.FitnessCentarId == fitnessCenterId && a.Timestamp >= oneHourAgo)
+            .Where(a => a.FitnessCentarId == fitnessCenterId && a.Timestamp >= oneAndHalfHoursAgo)
             .ToListAsync();
 
         return attendances;
     }
+
     
+    public async Task<ICollection<Attendance>> GetLeavingFitnessCenterAttendeesAsync(int fitnessCenterId)
+    {
+        var oneHourAgo = DateTime.UtcNow.AddHours(-1);
+        var oneAndHalfHoursAgo = DateTime.UtcNow.AddHours(-1.5);
+
+        var attendances = await _context.Attendances
+            .Where(a => a.FitnessCentarId == fitnessCenterId 
+                        && a.Timestamp >= oneAndHalfHoursAgo 
+                        && a.Timestamp < oneHourAgo)
+            .ToListAsync();
+
+        return attendances;
+    }
+
     
+    public async Task<Attendance?> GetAttendanceAsync(int attendanceId)
+    {
+        var attendance = await _context.Attendances.Where(
+            a => a.IdAttendance == attendanceId).FirstOrDefaultAsync();
+        
+        return attendance;    
+    }
     public async Task<bool> AddAttendanceAsync(Attendance attendance) 
     {
         await _context.Attendances.AddAsync(attendance);
+        return await SaveAsync();
+    }
+    
+    public async Task<bool> UpdateAttendanceAsync(Attendance attendance) 
+    {
+        _context.Attendances.Update(attendance);
+        return await SaveAsync();
+    }
+    public async Task<bool> DeleteAttendanceAsync(Attendance attendance) 
+    {
+        _context.Attendances.Remove(attendance);
         return await SaveAsync();
     }
     

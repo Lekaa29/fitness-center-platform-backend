@@ -17,9 +17,9 @@ public class ShopController : ControllerBase
         _shopService = shopService;
     }
     
-    [HttpGet("items/{fitnessCenterId}")]
+    [HttpGet("items/{fitnessCentarId}")]
     [ProducesResponseType(200, Type = typeof(List<ShopItemDto>))]
-    public async Task<IActionResult> GetFitnessCenterItems(int fitnessCenterId)
+    public async Task<IActionResult> GetFitnessCenterItems(int fitnessCentarId)
     {
         if (!ModelState.IsValid)
         {
@@ -32,7 +32,7 @@ public class ShopController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var shopItems = await _shopService.GetFitnessCenterItemsAsync(email, fitnessCenterId);
+        var shopItems = await _shopService.GetFitnessCenterItemsAsync(email, fitnessCentarId);
         return Ok(shopItems);
     }
     
@@ -112,5 +112,49 @@ public class ShopController : ControllerBase
         }
         return BadRequest("shopItem not added");
     }   
+    
+    [HttpPut("UpdateShopItem/{shopItemId}")]
+    public async Task<IActionResult> UpdateShopItem(int shopItemId, [FromBody] ShopItemDto shopItemDto)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        if (shopItemDto == null)
+        {
+            return BadRequest("Shop item object is null");
+        }
+
+        var result = await _shopService.UpdateShopItemAsync(shopItemId, shopItemDto, email);
+        if (result)
+        {
+            return Ok("Shop item updated successfully");
+        }
+
+        return BadRequest("Shop item not updated");
+    }
+
+    [HttpDelete("DeleteShopItem/{shopItemId}")]
+    public async Task<IActionResult> DeleteShopItem(int shopItemId)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var result = await _shopService.DeleteShopItemAsync(shopItemId, email);
+        if (result)
+        {
+            return Ok("Shop item deleted successfully");
+        }
+
+        return BadRequest("Shop item not deleted");
+    }
+
 }
 

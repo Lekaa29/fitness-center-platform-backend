@@ -72,4 +72,25 @@ public class AccountController : ControllerBase
 
         return Unauthorized("Invalid credentials.");
     }
+    
+    [HttpPost("UpdateUser")]
+    public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+     
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+        if (userDto == null)
+        {
+            return BadRequest("User object is null");
+        }
+        var result = await _userService.UpdateUserAsync(userDto, email);
+        if (result)
+        {
+            return Ok("User updated successfully");
+        }
+        return BadRequest("User not updated");
+    }   
 }

@@ -16,7 +16,7 @@ public class CoachController : ControllerBase
         _coachService = coachService;
     }
     
-    [HttpGet("/{coachId}/")]
+    [HttpGet("{coachId}/")]
     [ProducesResponseType(200, Type = typeof(CoachDto))]
     public async Task<IActionResult> GetCoach(int coachId)
     {
@@ -53,6 +53,29 @@ public class CoachController : ControllerBase
         var coach = await _coachService.GetCoachProgramAsync(coachProgramId, email);
         return Ok(coach);
     }
+    
+    [HttpGet("/coach/programs/{coachId}/")]
+    [ProducesResponseType(200, Type = typeof(List<CoachProgramDto>))]
+    public async Task<IActionResult> GetCoachPrograms(int coachId)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var coach = await _coachService.GetCoachProgramsAsync(coachId, email);
+        return Ok(coach);
+    }
+    
+ 
+    
+    
     [HttpPost("AddCoach")]
     public async Task<IActionResult> AddCoach([FromBody] CoachDto coachDto)
     {
@@ -94,6 +117,49 @@ public class CoachController : ControllerBase
         }
         return BadRequest("Coach program not added");
     }   
+    [HttpPut("UpdateCoach/{coachId}")]
+    public async Task<IActionResult> UpdateCoach(int coachId, [FromBody] CoachDto coachDto)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        if (coachDto == null)
+        {
+            return BadRequest("Coach object is null");
+        }
+
+        var result = await _coachService.UpdateCoachAsync(coachId, coachDto, email);
+        if (result)
+        {
+            return Ok("Coach updated successfully");
+        }
+
+        return BadRequest("Coach not updated");
+    }
+
+    [HttpDelete("DeleteCoach/{coachId}")]
+    public async Task<IActionResult> DeleteCoach(int coachId)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var result = await _coachService.DeleteCoachAsync(coachId, email);
+        if (result)
+        {
+            return Ok("Coach deleted successfully");
+        }
+
+        return BadRequest("Coach not deleted");
+    }
+
     
     
 }

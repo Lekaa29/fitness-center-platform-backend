@@ -25,3 +25,24 @@
   "userName": "leka40",
   "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFAYS5jb20iLCJuYW1laWQiOlsibGVrYTQwIiwiNSJdLCJ1bmlxdWVfbmFtZSI6ImFAYS5jb20iLCJuYmYiOjE3NDcxNjg3MzMsImV4cCI6MTc0NzI1NTEzMywiaWF0IjoxNzQ3MTY4NzMzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjcwNjYiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjcwNjYifQ.fvaawOVEfESm8dIOB0gguHOWd9LGefC0EUngHJAroPB4ixgNYBuwd5Uxgae3_KdvVWpqBC-sVPkQOx01VcfdHQ"
 }
+
+
+{
+  "username": "Anton97",
+  "firstName": "Anton",
+  "lastName": "Horvat",
+  "email": "c@c.com",
+  "password": "Anton123.",
+  "phoneNumber": "0919193499",
+  "profilePicture": null
+}
+
+{
+  "username": "IvanMar2",
+  "firstName": "Ivan",
+  "lastName": "Marković",
+  "email": "d@d.com",
+  "password": "Ivan123.",
+  "phoneNumber": "0919293499",
+  "profilePicture": null
+}

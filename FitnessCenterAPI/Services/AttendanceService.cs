@@ -13,14 +13,17 @@ public class AttendanceService
     private readonly AttendanceRepository _attendanceRepository;
     private readonly MembershipRepository _membershipRepository;
     private readonly FitnessCenterRepository _fitnessCenterRepository;
+    private readonly IConfiguration _configuration;
 
-    public AttendanceService(IMapper mapper, MembershipRepository membershipRepository, UserRepository userRepository, AttendanceRepository attendanceRepository, FitnessCenterRepository fitnessCenterRepository)
+
+    public AttendanceService(IMapper mapper, IConfiguration configuration, MembershipRepository membershipRepository, UserRepository userRepository, AttendanceRepository attendanceRepository, FitnessCenterRepository fitnessCenterRepository)
     {
         _mapper = mapper;
         _userRepository = userRepository;
         _attendanceRepository = attendanceRepository;
         _fitnessCenterRepository = fitnessCenterRepository;
         _membershipRepository = membershipRepository;
+        _configuration = configuration;
     }
 
     public async Task<ICollection<AttendanceDto>> GetAttendancesByUserAsync(string email)
@@ -62,7 +65,16 @@ public class AttendanceService
         return attendancesDtos;
     }
     
+    public async Task<ICollection<AttendanceDto>> GetLeavingFitnessCenterAttendeesAsync(string email, int fitnessCenterId)
+    {
+        var attendances = await _attendanceRepository.GetLeavingFitnessCenterAttendeesAsync(fitnessCenterId);
 
+        var attendancesDtos = _mapper.Map<ICollection<AttendanceDto>>(attendances);
+        
+        return attendancesDtos;
+    }
+    
+    
     
     public async Task<bool> AddAttendanceAsync(AttendanceDto attendanceDto, string email)
     {
@@ -72,7 +84,7 @@ public class AttendanceService
             return false;
         }
 
-        var lastAttendance = await _attendanceRepository.GetLastAttendancesByFitnessCenter(attendanceDto.FitnessCentarId);
+        var lastAttendance = await _attendanceRepository.GetLastAttendancesByFitnessCenter(attendanceDto.FitnessCentarId, user.Id);
         if (lastAttendance != null && lastAttendance.Timestamp.AddHours(12) < DateTime.Now)
         {
             var membership =
@@ -82,12 +94,15 @@ public class AttendanceService
             {
                 membership.StreakRunCount += 1;
                 membership.LoyaltyPoints += (1 + (membership.StreakRunCount / 5)) * 20; 
-                _attendanceRepository.ExtendStreakAsync(user.Id, attendanceDto.FitnessCentarId);
+                membership.Points += (1 + (membership.StreakRunCount / 5)) * 20;
+                //_attendanceRepository.ExtendStreakAsync(user.Id, attendanceDto.FitnessCentarId);
             }
             else
             {
                 membership.StreakRunCount = 0;
                 membership.LoyaltyPoints += (1 + (membership.StreakRunCount / 5)) * 20; 
+                membership.Points += (1 + (membership.StreakRunCount / 5)) * 20;
+
             }
             await _membershipRepository.UpdateMembershipAsync(membership);
         }
@@ -101,4 +116,37 @@ public class AttendanceService
 
         return await _attendanceRepository.AddAttendanceAsync(attendance);
     }
+    public async Task<bool> UpdateAttendanceAsync(int attendanceId, AttendanceDto attendanceDto, string email)
+    {
+        var attendance = await _attendanceRepository.GetAttendanceAsync(attendanceId);
+        if (attendance == null)
+        {
+            return false; // Not found
+        }
+        if (email != _configuration["AdminSettings:AdminEmail"])
+        {
+            return false; // Only admin can update
+        }
+
+        _mapper.Map(attendanceDto, attendance);
+
+        return await _attendanceRepository.UpdateAttendanceAsync(attendance);
+    }
+    
+    
+    public async Task<bool> DeleteAttendanceAsync(int attendanceId, string email)
+    {
+        var attendance = await _attendanceRepository.GetAttendanceAsync(attendanceId);
+        if (attendance == null)
+        {
+            return false; // Not found
+        }
+        if (email != _configuration["AdminSettings:AdminEmail"])
+        {
+            return false; // Only admin can delete
+        }
+
+        return await _attendanceRepository.DeleteAttendanceAsync(attendance);
+    }
+
 }

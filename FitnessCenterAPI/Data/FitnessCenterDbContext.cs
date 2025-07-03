@@ -28,6 +28,8 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
     public virtual DbSet<User> Users { get; set; }
     public DbSet<Attendance> Attendances { get; set; }
 
+    public DbSet<MembershipPackage> MembershipPackages { get; set; }
+
     
     public DbSet<Article> Articles { get; set; }
     public DbSet<Event> Events { get; set; }
@@ -79,12 +81,19 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
             .HasOne(a => a.FitnessCentar)
             .WithMany()
             .HasForeignKey(a => a.IdFitnessCentar);
+        
+       
 
 // Event
         modelBuilder.Entity<Event>()
             .HasOne(e => e.FitnessCentar)
             .WithMany()
             .HasForeignKey(e => e.IdFitnessCentar);
+        
+        modelBuilder.Entity<MembershipPackage>()
+            .HasOne(m => m.FitnessCentar)
+            .WithMany(f => f.MembershipPackages)
+            .HasForeignKey(m => m.IdFitnessCentar);
 
 // EventParticipant (join)
         modelBuilder.Entity<EventParticipant>()
@@ -206,6 +215,9 @@ public partial class FitnessCenterDbContext : IdentityDbContext<User, IdentityRo
 
             entity.Property(e => e.IdMembership).HasColumnName("id_membership");
             entity.Property(e => e.IdFitnessCentar).HasColumnName("id_fitness_centar");
+            entity.Property(e => e.Points)
+                .HasDefaultValue(0)
+                .HasColumnName("points");
             entity.Property(e => e.LoyaltyPoints)
                 .HasDefaultValue(0)
                 .HasColumnName("loyalty_points");

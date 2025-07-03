@@ -65,6 +65,18 @@ public class ShopRepository
         _context.UserItems.Update(userItems);
         return await SaveAsync();
     }
+    public async Task<bool> UpdateShopItemAsync(ShopItem shopItem)
+    {
+        _context.ShopItems.Update(shopItem);
+        return await SaveAsync();
+    }
+
+    public async Task<bool> DeleteShopItemAsync(ShopItem shopItem)
+    {
+        _context.ShopItems.Remove(shopItem);
+        return await SaveAsync();
+    }
+
         
         
     private async Task<bool> SaveAsync()

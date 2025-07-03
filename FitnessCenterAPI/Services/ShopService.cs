@@ -13,13 +13,15 @@ public class ShopService
     private readonly ShopRepository _shopRepository;
     private readonly UserRepository _userRepository;
     private readonly FitnessCenterRepository _fitnessCenterRepository;
+    private readonly IConfiguration _configuration;
 
-    public ShopService(IMapper mapper, ShopRepository shopRepository, UserRepository userRepository, FitnessCenterRepository fitnessCenterRepository)
+    public ShopService(IMapper mapper, IConfiguration configuration,ShopRepository shopRepository, UserRepository userRepository, FitnessCenterRepository fitnessCenterRepository)
     {
         _mapper = mapper;
         _shopRepository = shopRepository;
         _userRepository = userRepository;
         _fitnessCenterRepository = fitnessCenterRepository;
+        _configuration = configuration;
     }
     
     public async Task<ICollection<ShopItemDto>?> GetFitnessCenterItemsAsync(string email, int fitnessCenterId)
@@ -101,6 +103,38 @@ public class ShopService
 
         return await _shopRepository.AddUserItem(userItems);
     }
+    public async Task<bool> UpdateShopItemAsync(int shopItemId, ShopItemDto shopItemDto, string email)
+    {
+        var shopItem = await _shopRepository.GetShopItemAsync(shopItemId);
+        if (shopItem == null)
+        {
+            return false; // Not found
+        }
+        if (email != _configuration["AdminSettings:AdminEmail"])
+        {
+            return false; // Only admin can update
+        }
+
+        _mapper.Map(shopItemDto, shopItem);
+
+        return await _shopRepository.UpdateShopItemAsync(shopItem);
+    }
+
+    public async Task<bool> DeleteShopItemAsync(int shopItemId, string email)
+    {
+        var shopItem = await _shopRepository.GetShopItemAsync(shopItemId);
+        if (shopItem == null)
+        {
+            return false; // Not found
+        }
+        if (email != _configuration["AdminSettings:AdminEmail"])
+        {
+            return false; // Only admin can delete
+        }
+
+        return await _shopRepository.DeleteShopItemAsync(shopItem);
+    }
+
     
     
 }

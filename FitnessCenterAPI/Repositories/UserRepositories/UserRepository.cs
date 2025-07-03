@@ -32,5 +32,15 @@ public class UserRepository
     {
         return await _context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
     }
+    public async Task<bool> UpdateUserAsync(User user) 
+    {
+        _context.Users.Update(user);
+        return await SaveAsync();
+    }
     
+    private async Task<bool> SaveAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
+
 }

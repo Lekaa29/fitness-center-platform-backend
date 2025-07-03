@@ -10,7 +10,18 @@ public class Coach
     public int IdUser { get; set; }
     public User User { get; set; }
 
-    public string Experience { get; set; } = string.Empty;
-    public string PictureLink { get; set; } = string.Empty;
-    public string VideoLink { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string BannerPictureLink { get; set; } = string.Empty;
+    
 }
+
+/*
+data class Coach(
+    val user: User,
+    val description: String,
+    val bannerPictureLink: String? = null,
+    val programs: List<Program> = emptyList()
+)
+
+
+*/

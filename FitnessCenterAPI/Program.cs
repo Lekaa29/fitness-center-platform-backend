@@ -29,6 +29,12 @@ builder.Services.AddScoped<MembershipRepository>();
 builder.Services.AddScoped<MessageService>();
 builder.Services.AddScoped<MessageRepository>();
 
+builder.Services.AddScoped<ShopService>();
+builder.Services.AddScoped<ShopRepository>();
+
+builder.Services.AddScoped<ArticleService>();
+builder.Services.AddScoped<ArticleRepository>();
+
 
 
  
@@ -70,6 +76,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 builder.Services.AddDbContext<FitnessCenterDbContext>(options =>
     options.UseSqlite("Data Source=fitnessCenterDB.sqlite"));
 
@@ -132,6 +139,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FitnessCenterDbContext>();
+    db.Database.Migrate();
+}
  
  
 app.MapControllers();

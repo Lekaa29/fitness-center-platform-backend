@@ -100,6 +100,19 @@ public class UserService
         return true;
 
     }
- 
+    public async Task<bool> UpdateUserAsync(UserDto userDto, string email)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+        if (user == null || userDto.Id != user.Id)
+        {
+            return false;
+        }
+
+      
+        user.PictureLink = userDto.PictureLink;
+        
+
+        return await _userRepository.UpdateUserAsync(user);
+    }
 }
 

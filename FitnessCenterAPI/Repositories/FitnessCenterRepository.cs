@@ -33,6 +33,19 @@ public class FitnessCenterRepository
         return await SaveAsync();
     }
     
+    public async Task<bool> UpdateFitnessCenterAsync(FitnessCentar fitnessCentar)
+    {
+        _context.FitnessCentars.Update(fitnessCentar);
+        return await SaveAsync();
+    }
+
+    public async Task<bool> DeleteFitnessCenterAsync(FitnessCentar fitnessCentar)
+    {
+        _context.FitnessCentars.Remove(fitnessCentar);
+        return await SaveAsync();
+    }
+
+    
     private async Task<bool> SaveAsync()
     {
         return await _context.SaveChangesAsync() > 0;

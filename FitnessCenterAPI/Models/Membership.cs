@@ -11,6 +11,8 @@ public partial class Membership
 
     public int IdFitnessCentar { get; set; }
 
+    public int? Points { get; set; }
+
     public int? LoyaltyPoints { get; set; }
 
     public int? StreakRunCount { get; set; }
@@ -21,3 +23,14 @@ public partial class Membership
 
     public virtual User IdUserNavigation { get; set; } = null!;
 }
+
+/*
+data class Article(
+    val title: String?,
+    val text: String?,
+    val covertPictureLink: String?
+)
+
+)
+
+*/

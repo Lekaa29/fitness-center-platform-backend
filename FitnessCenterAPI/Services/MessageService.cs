@@ -12,12 +12,15 @@ public class MessageService
     private readonly IMapper _mapper;
     private readonly UserRepository _userRepository;
     private readonly MessageRepository _messageRepository;
+    private readonly IConfiguration _configuration;
 
-    public MessageService(IMapper mapper, UserRepository userRepository, MessageRepository messageRepository)
+
+    public MessageService(IMapper mapper, IConfiguration configuration, UserRepository userRepository, MessageRepository messageRepository)
     {
         _mapper = mapper;
         _userRepository = userRepository;
         _messageRepository = messageRepository;
+        _configuration = configuration;
     }
     
     

@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace FitnessCenterApi.Dtos;
 
-namespace FitnessCenterApi.Models;
-
-public class Article
+public class ArticleDto
 {
-    [Key]
     public int IdArticle { get; set; }
 
     public int IdFitnessCentar { get; set; }
-    public FitnessCentar FitnessCentar { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Text { get; set; } = string.Empty;
     public string? CoverPictureLink { get; set; } = string.Empty;

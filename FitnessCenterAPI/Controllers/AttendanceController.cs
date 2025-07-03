@@ -36,9 +36,9 @@ public class AttendanceController : ControllerBase
         var attendances = await _attendanceService.GetAttendancesByUserAsync(email);
         return Ok(attendances);
     }
-    [HttpGet("users/{fitnessCenterId}")]
+    [HttpGet("users/{fitnessCentarIdfitnessCentarId}")]
     [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
-    public async Task<IActionResult> GetAttendancesByUsersAtFitnessCenter(int fitnessCenterId)
+    public async Task<IActionResult> GetAttendancesByUsersAtFitnessCenter(int fitnessCentarId)
     {
         if (!ModelState.IsValid)
         {
@@ -51,13 +51,13 @@ public class AttendanceController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var attendances = await _attendanceService.GetAttendancesByUserAtFitnessCenterAsync(email, fitnessCenterId);
+        var attendances = await _attendanceService.GetAttendancesByUserAtFitnessCenterAsync(email, fitnessCentarId);
         return Ok(attendances);
     }
     
-    [HttpGet("fitnesscenters/{fitnessCenterId}")]
+    [HttpGet("fitnesscenters/{fitnessCentarId}")]
     [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
-    public async Task<IActionResult> GetAttendancesByFitnessCenter(int fitnessCenterId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
+    public async Task<IActionResult> GetAttendancesByFitnessCenter(int fitnessCentarId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
     {
         if (!ModelState.IsValid)
         {
@@ -70,13 +70,13 @@ public class AttendanceController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var attendances = await _attendanceService.GetAttendancesByFitnessCenter(email, fitnessCenterId);
+        var attendances = await _attendanceService.GetAttendancesByFitnessCenter(email, fitnessCentarId);
         return Ok(attendances);
     }
     
-    [HttpGet("fitnesscenters/recent/{fitnessCenterId}")]
-    [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
-    public async Task<IActionResult> GetRecentFitnessCenterAttendees(int fitnessCenterId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
+    [HttpGet("fitnesscenters/recent/{fitnessCentarId}")]
+    [ProducesResponseType(200, Type = typeof(int))]
+    public async Task<IActionResult> GetRecentFitnessCenterAttendees(int fitnessCentarId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
     {
         if (!ModelState.IsValid)
         {
@@ -89,8 +89,27 @@ public class AttendanceController : ControllerBase
             return Unauthorized("Invalid attempt");
         }
 
-        var attendances = await _attendanceService.GetRecentFitnessCenterAttendeesAsync(email, fitnessCenterId);
-        return Ok(attendances);
+        var attendances = await _attendanceService.GetRecentFitnessCenterAttendeesAsync(email, fitnessCentarId);
+        return Ok(attendances.Count);
+    }
+    
+    [HttpGet("fitnesscenters/leaving/{fitnessCentarId}")]
+    [ProducesResponseType(200, Type = typeof(int))]
+    public async Task<IActionResult> GetLeavingFitnessCenterAttendees(int fitnessCentarId, [FromQuery] int start = 0, [FromQuery] int limit = 20)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var attendances = await _attendanceService.GetLeavingFitnessCenterAttendeesAsync(email, fitnessCentarId);
+        return Ok(attendances.Count);
     }
 
 
@@ -113,4 +132,48 @@ public class AttendanceController : ControllerBase
         }
         return BadRequest("Attendance not added");
     }
+    
+    [HttpPut("UpdateAttendance/{attendanceId}")]
+    public async Task<IActionResult> UpdateAttendance(int attendanceId, [FromBody] AttendanceDto attendanceDto)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        if (attendanceDto == null)
+        {
+            return BadRequest("Attendance object is null");
+        }
+
+        var result = await _attendanceService.UpdateAttendanceAsync(attendanceId, attendanceDto, email);
+        if (result)
+        {
+            return Ok("Attendance updated successfully");
+        }
+
+        return BadRequest("Attendance not updated");
+    }
+
+    [HttpDelete("DeleteAttendance/{attendanceId}")]
+    public async Task<IActionResult> DeleteAttendance(int attendanceId)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var result = await _attendanceService.DeleteAttendanceAsync(attendanceId, email);
+        if (result)
+        {
+            return Ok("Attendance deleted successfully");
+        }
+
+        return BadRequest("Attendance not deleted");
+    }
+
 }
