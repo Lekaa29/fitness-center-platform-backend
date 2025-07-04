@@ -135,7 +135,10 @@ public class FitnessCenterService
             fitnessCenter.DistanceInMeters = distance;
         }
         
-        return fitnessCentersDtos.OrderByDescending(d => d.DistanceInMeters).Take(3).ToList();
+        return fitnessCentersDtos
+            .OrderBy(d => d.DistanceInMeters)
+            .Take(3)
+            .ToList();
     }
     
     

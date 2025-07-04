@@ -37,7 +37,21 @@ public class MessageService
         
         return messagesDtos;
     }
+    public async Task<int?> GetConversationIdByRecepient(int recepientId, string email)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+        if (user == null)
+        {
+            return -1;
+        }
+        var conversationId = await _messageRepository.GetConversationIdByRecipient(recepientId, user.Id);
+
+
+        if (conversationId == null) return -1;
+        return conversationId;
+    }
     
+
     public async Task<ICollection<ConversationDto>?> GetAllUsersConversationsAsync(string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);

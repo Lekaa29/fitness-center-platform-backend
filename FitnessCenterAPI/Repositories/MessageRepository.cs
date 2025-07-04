@@ -63,6 +63,31 @@ public class MessageRepository
         return userConversations;
     }
     
+    public async Task<int?> GetConversationIdByRecipient(int recipientId, int userId)
+    {
+        var conversationIds = await _context.UserConversations
+            .Where(u => u.UserId == userId)
+            .Select(u => u.ConversationId)
+            .ToListAsync();
+
+        var recipientConversationIds = await _context.UserConversations
+            .Where(u => u.UserId == recipientId)
+            .Select(u => u.ConversationId)
+            .ToListAsync();
+
+        var sharedConversationId = conversationIds
+            .Intersect(recipientConversationIds)
+            .FirstOrDefault();
+
+        if (sharedConversationId == 0) return null;
+
+        var conversation = await _context.Conversations
+            .FirstOrDefaultAsync(c => c.IdConversation == sharedConversationId && !c.IsGroup);
+
+        return conversation?.IdConversation;
+    }
+
+
    
     public async  Task<Message?> GetMessageAsync(int messageId)
     {

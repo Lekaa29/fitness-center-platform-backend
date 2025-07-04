@@ -55,6 +55,25 @@ public class MessageController : ControllerBase
         return Ok(conversations);
     }
     
+    [HttpGet("id/{userId}/")]
+    [ProducesResponseType(200, Type = typeof(int))]
+    public async Task<IActionResult> GetConversationIdByRecepient(int userId)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var conversationId = await _messageService.GetConversationIdByRecepient(userId, email);
+        return Ok(conversationId);
+    }
+    
     
     
     [HttpGet("{conversationId}/participants")]
