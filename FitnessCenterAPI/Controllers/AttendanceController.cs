@@ -36,7 +36,7 @@ public class AttendanceController : ControllerBase
         var attendances = await _attendanceService.GetAttendancesByUserAsync(email);
         return Ok(attendances);
     }
-    [HttpGet("users/{fitnessCentarIdfitnessCentarId}")]
+    [HttpGet("users/{fitnessCentarId}")]
     [ProducesResponseType(200, Type = typeof(List<AttendanceDto>))]
     public async Task<IActionResult> GetAttendancesByUsersAtFitnessCenter(int fitnessCentarId)
     {

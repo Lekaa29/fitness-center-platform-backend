@@ -9,6 +9,8 @@ public class FitnessCenterDto
     public double Latitude { get; set; }  
     public double Longitude { get; set; } 
     public string? PictureLink { get; set; }
+    public string? Color { get; set; }
+
 
 
     public string Name { get; set; } = null!;

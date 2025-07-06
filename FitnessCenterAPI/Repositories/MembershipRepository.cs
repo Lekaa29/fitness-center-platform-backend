@@ -43,6 +43,7 @@ public class MembershipRepository
     {
         var membership = await _context.Memberships
             .Where(m => m.IdFitnessCentar == fitnessCenterId)
+            .Include(m => m.IdUserNavigation)
             .OrderByDescending(m => m.Points)
             .Take(50)
             .ToListAsync();

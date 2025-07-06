@@ -214,6 +214,24 @@ public class MessageController : ControllerBase
         return BadRequest("Message not updated");
     }  
     
+        [HttpPut("{conversationId}/markAsRead/")]
+    public async Task<IActionResult> ConversationMarkAllAsRead([FromRoute] int conversationId)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var result = await _messageService.ConversationMarkAllAsRead(conversationId, email);
+        if (result)
+        {
+            return Ok("Conversation updated successfully");
+        }
+        return BadRequest("Conversation not updated");
+    }  
+    
     [HttpGet("{conversationId}/message/unreadCount")]
     [ProducesResponseType(200, Type = typeof(int))]
     public async Task<IActionResult> GetConversationUnreadMessages(int conversationId)

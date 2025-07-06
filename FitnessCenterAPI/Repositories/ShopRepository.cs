@@ -62,7 +62,7 @@ public class ShopRepository
     }
     public async Task<bool> AddUserItem(UserItems userItems) 
     {
-        _context.UserItems.Update(userItems);
+        _context.UserItems.Add(userItems);
         return await SaveAsync();
     }
     public async Task<bool> UpdateShopItemAsync(ShopItem shopItem)

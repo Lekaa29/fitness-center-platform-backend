@@ -60,8 +60,21 @@ public class MessageService
             return null;
         }
         var conversations = await _messageRepository.GetAllUsersConversationsAsync(user.Id);
-
         var conversationsDtos = _mapper.Map<ICollection<ConversationDto>>(conversations);
+
+        foreach (var conversation in conversationsDtos)
+        {
+            conversation.UnreadCount = await GetConversationUnreadMessagesAsync(conversation.IdConversation, email);
+            if (conversation.IsGroup == false)
+            {
+                var recepient = await _messageRepository.GetRecepientAsync(conversation.IdConversation, user.Id);
+                if (recepient != null)
+                {
+                    conversation.Title = recepient.FirstName + " " + recepient.LastName;
+                    conversation.ImageUrl = recepient.PictureLink;
+                }
+            }
+        }
         
         return conversationsDtos;
     }
@@ -235,6 +248,20 @@ public class MessageService
         return await _messageRepository.UpdateUserMessagesAsync(messages);
         
     }
+    
+    public async Task<bool> ConversationMarkAllAsRead(int conversationId, string email)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+        if (user == null)
+        {
+            return false;
+        }
+
+        return await _messageRepository.ConversationMarkAllAsRead(conversationId);
+        
+    }
+    
+    
     
     public async Task<bool> DeleteMessageAsync(int messageId, string email)
     {

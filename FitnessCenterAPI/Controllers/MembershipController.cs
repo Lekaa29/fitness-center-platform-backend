@@ -150,7 +150,7 @@ public class MembershipController : ControllerBase
         {
             return BadRequest("Membership object is null");
         }
-        var result = await _membershipService.UpdateMembershipAsync(membershipDto, email);
+        var result = await _membershipService.AddOrUpdateMembershipAsync(membershipDto, email);
         if (result)
         {
             return Ok("Membership updated successfully");

@@ -13,6 +13,10 @@ public partial class FitnessCentar
     
     public string? BannerUrl { get; set; }
     public string? LogoUrl { get; set; }
+    
+    public string? Color { get; set; }
+
+    
     //color
 
     public virtual ICollection<Membership> Memberships { get; set; } = new List<Membership>();

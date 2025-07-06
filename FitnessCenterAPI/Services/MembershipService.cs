@@ -86,12 +86,22 @@ public class MembershipService
         {
             return null;
         }
+
         var memberships = await _memberShipRepository.GetFitnessCenterLeaderboardAsync(fitnessCenterId);
 
         var membershipsDtos = _mapper.Map<ICollection<MembershipDto>>(memberships);
-        
+
+        // Manually map the username for each DTO
+        int index = 0;
+        foreach (var membership in memberships)
+        {
+            membershipsDtos.ElementAt(index).Username = membership.IdUserNavigation.UserName;
+            index++;
+        }
+
         return membershipsDtos;
     }
+
     
     public async Task<bool> AddMembershipAsync(MembershipDto membershipDto, string email)
     {
@@ -125,8 +135,7 @@ public class MembershipService
 
         return await _memberShipRepository.AddMembershipPackageAsync(membershipPackage);
     }
-    
-    public async Task<bool> UpdateMembershipAsync(MembershipDto membershipDto, string email)
+    public async Task<bool> AddOrUpdateMembershipAsync(MembershipDto membershipDto, string email)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
         if (user == null)
@@ -138,27 +147,44 @@ public class MembershipService
         {
             return false;
         }
+
         var membershipPackage = await _memberShipRepository.GetFitnessCenterMembershipPackageAsync(membershipDto.IdMembershipPackage);
-        
-        
-        var existingMembership =
-           await _memberShipRepository.GetUserMembershipByFitnessCenterAsync(user.Id, membershipDto.IdFitnessCentar);
+        if (membershipPackage == null)
+        {
+            return false;
+        }
+
+        var existingMembership = await _memberShipRepository.GetUserMembershipByFitnessCenterAsync(user.Id, membershipDto.IdFitnessCentar);
+
         if (existingMembership == null)
         {
+            // First time - Add new membership
             var membership = _mapper.Map<Membership>(membershipDto);
 
             membership.IdFitnessCentarNavigation = await _fitnessCenterRepository.GetFitnessCenterAsync(membershipDto.IdFitnessCentar);
             membership.IdUserNavigation = user;
-        
-            membership.MembershipDeadline = DateTime.Now.AddDays(31);
+            membership.MembershipDeadline = DateTime.Now.AddDays(membershipPackage.Days);
 
             return await _memberShipRepository.AddMembershipAsync(membership);
         }
-        existingMembership.MembershipDeadline = DateTime.Now.AddDays(membershipPackage.Days);
-        
-        
-        return await _memberShipRepository.UpdateMembershipAsync(existingMembership);
+        else
+        {
+            // Existing membership - Extend
+            if (existingMembership.MembershipDeadline > DateTime.Now)
+            {
+                // Extend from the current deadline
+                existingMembership.MembershipDeadline = existingMembership.MembershipDeadline.Value.AddDays(membershipPackage.Days);
+            }
+            else
+            {
+                // Extend from today if membership already expired
+                existingMembership.MembershipDeadline = DateTime.Now.AddDays(membershipPackage.Days);
+            }
+
+            return await _memberShipRepository.UpdateMembershipAsync(existingMembership);
+        }
     }
+
 
     public async Task<MembershipPackageDto> GetMembershipPackageAsync(int idMembershipPackage, string email)
     {

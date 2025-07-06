@@ -53,6 +53,23 @@ public class MessageRepository
         return users;
     }
     
+    public async Task<User?> GetRecepientAsync(int conversationId, int userId)
+    {
+        var userConversations = await _context.UserConversations
+            .Where(u => u.ConversationId == conversationId)
+            .ToListAsync();
+
+        var userIds = userConversations.Select(uc => uc.UserId).ToList();
+
+        var recipient = await _context.Users
+            .Where(u => userIds.Contains(u.Id) && u.Id != userId)
+            .FirstOrDefaultAsync();
+
+        return recipient;
+    }
+
+    
+    
     public async  Task<UserConversation?> GetUserConversationByConversationAsync(int conversationId, int userId)
     {   
 
@@ -207,6 +224,29 @@ public class MessageRepository
         
         return await SaveAsync();
     }
+    
+    public async Task<bool> ConversationMarkAllAsRead(int conversationId)
+    {
+        var messages = await _context.Messages
+            .Where(m => m.IdConversation == conversationId)
+            .ToListAsync();
+
+        var messageIds = messages.Select(m => m.IdMessage).ToList();
+
+        var userMessages = await _context.UserMessages
+            .Where(u => messageIds.Contains(u.MessageId) && u.isRead == false)
+            .ToListAsync();
+
+        foreach (var userMessage in userMessages)
+        {
+            userMessage.isRead = true;
+        }
+
+
+        return await SaveAsync();
+    }
+
+    
     
     public async Task<bool> UpdateConversationAsync(Conversation conversation) 
     {

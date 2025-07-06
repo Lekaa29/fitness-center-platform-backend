@@ -13,14 +13,16 @@ public class ShopService
     private readonly ShopRepository _shopRepository;
     private readonly UserRepository _userRepository;
     private readonly FitnessCenterRepository _fitnessCenterRepository;
+    private readonly MembershipRepository _membershipRepository;
     private readonly IConfiguration _configuration;
 
-    public ShopService(IMapper mapper, IConfiguration configuration,ShopRepository shopRepository, UserRepository userRepository, FitnessCenterRepository fitnessCenterRepository)
+    public ShopService(IMapper mapper, IConfiguration configuration, MembershipRepository membershipRepository, ShopRepository shopRepository, UserRepository userRepository, FitnessCenterRepository fitnessCenterRepository)
     {
         _mapper = mapper;
         _shopRepository = shopRepository;
         _userRepository = userRepository;
         _fitnessCenterRepository = fitnessCenterRepository;
+        _membershipRepository = membershipRepository;
         _configuration = configuration;
     }
     
@@ -93,6 +95,20 @@ public class ShopService
         {
             return false;
         }
+
+        
+        var userMembership = await _membershipRepository.GetUserMembershipByFitnessCenterAsync(user.Id, shopItem.IdFitnessCentar);
+        if (userMembership == null)
+        {
+            return false;
+        }
+
+
+
+        if (userMembership.LoyaltyPoints < shopItem.LoyaltyPrice) return false;
+        
+        userMembership.LoyaltyPoints -= Convert.ToInt32(shopItem.LoyaltyPrice);
+        await _membershipRepository.UpdateMembershipAsync(userMembership);
         
         UserItems userItems = new UserItems();
         userItems.IdUser = user.Id;
