@@ -225,20 +225,23 @@ public class MessageRepository
         return await SaveAsync();
     }
     
-    public async Task<bool> ConversationMarkAllAsRead(int conversationId)
+    public async Task<bool> ConversationMarkAllAsRead(int conversationId, int userId)
     {
         var messages = await _context.Messages
-            .Where(m => m.IdConversation == conversationId)
+            .Where(m => m.IdConversation == conversationId) 
             .ToListAsync();
 
         var messageIds = messages.Select(m => m.IdMessage).ToList();
 
         var userMessages = await _context.UserMessages
-            .Where(u => messageIds.Contains(u.MessageId) && u.isRead == false)
+            .Where(u => messageIds.Contains(u.MessageId) && u.isRead == false && u.UserId == userId)
             .ToListAsync();
+        Console.WriteLine(userMessages.Count);
 
         foreach (var userMessage in userMessages)
         {
+            Console.WriteLine(userMessage.isRead);
+
             userMessage.isRead = true;
         }
 
@@ -246,7 +249,23 @@ public class MessageRepository
         return await SaveAsync();
     }
 
-    
+    public async Task<ICollection<UserMessage>> GetLastParticipantsReadMessages(int conversationId, int userId)
+    {
+        var userMessages = await _context.UserMessages
+            .Where(um => um.Message.IdConversation == conversationId && um.UserId != userId && um.isRead)
+            .Include(um => um.Message)
+            .OrderByDescending(um => um.Message.Timestamp)
+            .ToListAsync();
+
+        var lastReadMessages = userMessages
+            .GroupBy(um => um.UserId)
+            .Select(g => g.First())
+            .ToList();
+
+        return lastReadMessages;
+    }
+
+
     
     public async Task<bool> UpdateConversationAsync(Conversation conversation) 
     {

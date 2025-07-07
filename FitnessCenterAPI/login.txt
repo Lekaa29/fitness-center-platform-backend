@@ -46,3 +46,75 @@
   "phoneNumber": "0919293499",
   "profilePicture": null
 }
+
+
+{
+  "username": "harden18",
+  "firstName": "Luka",
+  "lastName": "Petrovac",
+  "email": "e@e.com",
+  "password": "Petrovac123.",
+  "phoneNumber": "0919193499",
+  "profilePicture": null
+}
+
+{
+  "username": "filipl02",
+  "firstName": "Filip",
+  "lastName": "Lukić",
+  "email": "f@f.com",
+  "password": "Filip123.",
+  "phoneNumber": "0912193499",
+  "profilePicture": null
+}
+
+{
+  "username": "franc29",
+  "firstName": "Fran",
+  "lastName": "Zubak",
+  "email": "g@g.com",
+  "password": "Fran123.",
+  "phoneNumber": "0919193422",
+  "profilePicture": null
+}
+
+
+{
+  "username": "zoki99",
+  "firstName": "Zdravko",
+  "lastName": "Tokić",
+  "email": "h@h.com",
+  "password": "Zdravko123.",
+  "phoneNumber": "0919193412",
+  "profilePicture": null
+}
+
+{
+  "username": "mila87",
+  "firstName": "Mila",
+  "lastName": "Kovač",
+  "email": "mila.kovac@example.com",
+  "password": "Mila2024@",
+  "phoneNumber": "0921123344",
+  "profilePicture": null
+}
+
+{
+  "username": "ivan_m",
+  "firstName": "Ivan",
+  "lastName": "Marić",
+  "email": "ivan.maric@example.com",
+  "password": "IvanM456!",
+  "phoneNumber": "0958765432",
+  "profilePicture": null
+}
+
+{
+  "username": "lea_p",
+  "firstName": "Lea",
+  "lastName": "Petrović",
+  "email": "lea.petrovic@example.com",
+  "password": "LeaPetro1?",
+  "phoneNumber": "0976543210",
+  "profilePicture": null
+}

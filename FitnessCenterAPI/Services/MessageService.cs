@@ -114,6 +114,27 @@ public class MessageService
         return messagesDtos;
     }
     
+    public async Task<ICollection<UserMessageDto>?> GetLastParticipantsReadMessages(int conversationId, string email)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+        if (user == null)
+        {
+            return null;
+        }
+        var userMessages = await _messageRepository.GetLastParticipantsReadMessages(conversationId, user.Id);
+    
+        var userMessagesDto = _mapper.Map<ICollection<UserMessageDto>>(userMessages);
+
+        foreach (var userMessage in userMessagesDto)
+        {
+            var readby = await _userRepository.GetUserAsync(userMessage.UserId);
+            userMessage.Name = readby.FirstName + "." + readby.LastName.First();
+        }
+        
+        return userMessagesDto;
+    }
+    
+    
     
     
     public async Task<bool> AddMessageAsync(MessageDto messageDto, int recipientId, string email)
@@ -257,7 +278,7 @@ public class MessageService
             return false;
         }
 
-        return await _messageRepository.ConversationMarkAllAsRead(conversationId);
+        return await _messageRepository.ConversationMarkAllAsRead(conversationId, user.Id);
         
     }
     

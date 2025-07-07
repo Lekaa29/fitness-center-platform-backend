@@ -7,6 +7,8 @@ namespace FitnessCenterApi.Repositories;
 public class AttendanceRepository
 {
     private readonly FitnessCenterDbContext _context;
+    private readonly Random _random = new Random();
+
     
     public AttendanceRepository(FitnessCenterDbContext context)
     {
@@ -44,6 +46,38 @@ public class AttendanceRepository
             .ToListAsync();
 
         return attendances.LastOrDefault(); // returns null if list is empty
+    }
+    
+    public void SeedAttendances()
+    {
+        var userIds = Enumerable.Range(1, 10).ToList(); // User IDs 1-10
+        var fitnessCenterIds = new List<int> { 2, 3 };
+
+        var startDate = DateTime.Now.AddMonths(-1); // Start from 3 months ago
+        var attendances = new List<Attendance>();
+
+        foreach (var userId in userIds)
+        {
+            DateTime currentTimestamp = startDate.AddDays(_random.Next(0, 5)); // Small initial random offset
+
+            for (int i = 0; i < 4; i++) // Roughly 4 attendances per user to total ~40 records
+            {
+                var fitnessCenterId = fitnessCenterIds[_random.Next(fitnessCenterIds.Count)];
+                
+                attendances.Add(new Attendance
+                {
+                    UserId = userId,
+                    FitnessCentarId = fitnessCenterId,
+                    Timestamp = currentTimestamp
+                });
+
+                // Increment date by 2 or 3 days randomly
+                currentTimestamp = currentTimestamp.AddDays(_random.Next(2, 4));
+            }
+        }
+
+        _context.Attendances.AddRange(attendances);
+        _context.SaveChanges();
     }
 
     
@@ -96,10 +130,41 @@ public class AttendanceRepository
     }
     public async Task<bool> AddAttendanceAsync(Attendance attendance) 
     {
+        SeedAttendances();
+        SeedRecentAttendances();
+        
         await _context.Attendances.AddAsync(attendance);
         return await SaveAsync();
     }
-    
+
+    public void SeedRecentAttendances()
+    {
+        var userIds = Enumerable.Range(1, 10).ToList(); // User IDs 1-10
+        var fitnessCenterIds = new List<int> { 2, 3 };
+
+        var now = DateTime.Now;
+        var attendances = new List<Attendance>();
+
+        foreach (var userId in userIds)
+        {
+            for (int i = 0; i < 2; i++) // 2 attendances per user
+            {
+                var fitnessCenterId = fitnessCenterIds[_random.Next(fitnessCenterIds.Count)];
+
+                // Random timestamp within the last 2 hours
+                var randomMinutesAgo = _random.Next(0, 120); // Up to 120 minutes ago
+                var timestamp = now.AddMinutes(-randomMinutesAgo);
+
+                attendances.Add(new Attendance
+                {
+                    UserId = userId,
+                    FitnessCentarId = fitnessCenterId,
+                    Timestamp = timestamp
+                });
+            }
+        }
+    }
+
     public async Task<bool> UpdateAttendanceAsync(Attendance attendance) 
     {
         _context.Attendances.Update(attendance);

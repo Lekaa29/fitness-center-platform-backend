@@ -74,6 +74,26 @@ public class MessageController : ControllerBase
         return Ok(conversationId);
     }
     
+    [HttpGet("{conversationId}/participentRead")]
+    [ProducesResponseType(200, Type = typeof(ICollection<UserMessageDto>))]
+    public async Task<IActionResult> GetLastParticipantsReadMessages(int conversationId)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null)
+        {
+            return Unauthorized("Invalid attempt");
+        }
+
+        var result = await _messageService.GetLastParticipantsReadMessages(conversationId, email);
+        return Ok(result);
+    }
+    
+    
     
     
     [HttpGet("{conversationId}/participants")]
@@ -214,7 +234,7 @@ public class MessageController : ControllerBase
         return BadRequest("Message not updated");
     }  
     
-        [HttpPut("{conversationId}/markAsRead/")]
+    [HttpPost("{conversationId}/markAsRead/")]
     public async Task<IActionResult> ConversationMarkAllAsRead([FromRoute] int conversationId)
     {
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
